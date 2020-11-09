@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using KataPotter.Services;
 
-namespace KataPotter.Services
+namespace KataPotter
 {
     public class Checkout
     {

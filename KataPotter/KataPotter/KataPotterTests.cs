@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KataPotter.Services;
 using NUnit.Framework;
 
 namespace KataPotter
