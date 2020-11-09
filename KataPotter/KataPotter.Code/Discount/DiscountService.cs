@@ -24,7 +24,7 @@ namespace KataPotter.Code.Discount
             }
         };
 
-        public DiscountGrouping GetDiscountGroups(List<int> books, int maxDiscountFactor)
+        public DiscountGrouping GetDiscountGroups(List<int> books, int maxGroupSize)
         {
             var groups = new DiscountGrouping();
 
@@ -35,7 +35,7 @@ namespace KataPotter.Code.Discount
                 var list = new List<int>();
                 foreach (var book in booksToIterate.ToList())
                 {
-                    if (!list.Contains(book) && list.Count < maxDiscountFactor)
+                    if (!list.Contains(book) && list.Count < maxGroupSize)
                     {
                         list.Add(book);
                         booksToIterate.Remove(book);
