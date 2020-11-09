@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KataPotter.Models;
 
-namespace KataPotter.Services
+namespace KataPotter.Code.Discount
 {
     public class DiscountService
     {

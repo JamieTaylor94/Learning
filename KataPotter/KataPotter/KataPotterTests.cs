@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using KataPotter.Code;
 using NUnit.Framework;
 
 namespace KataPotter
@@ -43,16 +44,12 @@ namespace KataPotter
             Assert.AreEqual(16, price);
         }
 
-        [TestCase("1,2,3,4,5", 30)]
-        [TestCase("1,2,3", 21.6)]
-        [TestCase("1,2", 15.2)]
-
-        public void UniqueBooks_HaveTheCorrectDiscount(string bookStr, decimal expectedPrice)
+        [TestCase(new[] {1, 2, 3, 4, 5}, 30)]
+        [TestCase(new[] {1, 2, 3}, 21.6)]
+        [TestCase(new[] {1, 2}, 15.2)]
+        public void UniqueBooks_HaveTheCorrectDiscount(int[] books, decimal expectedPrice)
         {
-            var books = bookStr.Split(',')
-                .Select(int.Parse).ToList();
-
-            var price = _checkout.GetPriceFor(books);
+            var price = _checkout.GetPriceFor(books.ToList());
 
             Assert.AreEqual(expectedPrice, price);
         }

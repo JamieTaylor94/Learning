@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KataPotter.Services;
+using KataPotter.Code.Discount;
 
-namespace KataPotter
+namespace KataPotter.Code
 {
     public class Checkout
     {

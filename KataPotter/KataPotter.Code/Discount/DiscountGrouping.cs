@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace KataPotter.Models
+namespace KataPotter.Code.Discount
 {
     public class DiscountGrouping
     {
