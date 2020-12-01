@@ -5,49 +5,17 @@ namespace KataPotter.Code.Discount
 {
     public class DiscountService
     {
-        public static readonly List<Dictionary<int, decimal>> DiscountCombinations = new List<Dictionary<int, decimal>>
+        private static readonly Dictionary<int, decimal> DiscountFactors = new Dictionary<int, decimal>()
         {
-            new Dictionary<int, decimal>
-            {
-                {5, 0.75m},
-                {4, 0.80m},
-                {3, 0.90m},
-                {2, 0.95m},
-                {1, 1}
-            },
-            new Dictionary<int, decimal>
-            {
-                {4, 0.80m},
-                {3, 0.90m},
-                {2, 0.95m},
-                {1, 1}
-            }
+            {5, 0.75m},
+            {4, 0.80m},
+            {3, 0.90m},
+            {2, 0.95m}
         };
-
-        public DiscountGrouping GetDiscountGroups(List<int> books, int maxGroupSize)
+    
+        public static decimal GetDiscountFactor(int groupSize)
         {
-            var groups = new DiscountGrouping();
-
-            var booksToIterate = books;
-
-            while (booksToIterate.Distinct().Count() > 1)
-            {
-                var list = new List<int>();
-                foreach (var book in booksToIterate.ToList())
-                {
-                    if (!list.Contains(book) && list.Count < maxGroupSize)
-                    {
-                        list.Add(book);
-                        booksToIterate.Remove(book);
-                    }
-                }
-
-                groups.Add(new DiscountGroup {Group = list});
-            }
-
-            groups.LeftOverBooks = booksToIterate;
-
-            return groups;
+            return DiscountFactors[groupSize];
         }
     }
 }
