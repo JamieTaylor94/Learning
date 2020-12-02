@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace KataPotter.Code.Discount
+namespace KataPotter.Code
 {
     public class DiscountGroup
     {

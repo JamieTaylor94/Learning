@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KataPotter.Code.Discount;
 
 namespace KataPotter.Code
 {
@@ -28,7 +27,7 @@ namespace KataPotter.Code
                 var shouldHaveDiscount = group.Count > 1;
                 if (shouldHaveDiscount)
                 {
-                    price += group.Count * SingleBookPrice * DiscountService.GetDiscountFactor(group.UniqueCount);
+                    price += ApplyDiscountedPrice(group);
                 }
                 else
                 {
@@ -39,7 +38,7 @@ namespace KataPotter.Code
             return price;
         }
 
-        private List<DiscountGroup> GenerateDiscountGroups(List<int> books)
+        private IEnumerable<DiscountGroup> GenerateDiscountGroups(List<int> books)
         {
             var groups = new List<DiscountGroup>();
             var maxItemsPerGroup = CalculateMaximumItemsInAGroup(books);
@@ -59,6 +58,13 @@ namespace KataPotter.Code
             }
 
             return groups;
+        }
+
+        private static decimal ApplyDiscountedPrice(DiscountGroup group)
+        {
+            return group.Count 
+                   * SingleBookPrice 
+                   * DiscountService.GetDiscountFactor(group.UniqueCount);
         }
 
         private static int CalculateMaximumItemsInAGroup(IReadOnlyCollection<int> books)
