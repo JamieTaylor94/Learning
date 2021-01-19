@@ -12,64 +12,70 @@ namespace KataPotter.Code
         {
             if (books.Count == 0) return 0;
 
-            var groups = GenerateDiscountGroups(books);
+            var buckets = PopulatePriceBuckets(books);
 
-            var price = CalculatePrice(groups);
+            var price = CalculatePrice(buckets);
 
             return price;
         }
 
-        private static decimal CalculatePrice(IEnumerable<DiscountGroup> groups)
+        private decimal CalculatePrice(IEnumerable<PriceBucket> buckets)
         {
             var price = 0m;
-            foreach (var group in groups)
+            foreach (var bucket in buckets)
             {
-                var shouldHaveDiscount = group.Count > 1;
+                var shouldHaveDiscount = bucket.Count > 1;
                 if (shouldHaveDiscount)
                 {
-                    price += ApplyDiscountedPrice(group);
+                    price += ApplyDiscountedPrice(bucket);
                 }
                 else
                 {
-                    price += group.Count * SingleBookPrice;
+                    price += bucket.Count * SingleBookPrice;
                 }
             }
 
             return price;
         }
 
-        private IEnumerable<DiscountGroup> GenerateDiscountGroups(List<int> books)
+        private IEnumerable<PriceBucket> PopulatePriceBuckets(List<int> books)
         {
-            var groups = new List<DiscountGroup>();
-            var maxItemsPerGroup = CalculateMaximumItemsInAGroup(books);
+            var buckets = new List<PriceBucket>();
+            var maxItemsPerBucket = CalculateMaximumItemsInABucket(books);
 
-            for (var i = 0; i < books.Count + 1; i++)
+            for (var i = 0; i <= books.Count; i++)
             {
-                var group = new List<int>();
+                var bucket = new List<int>();
                 var booksToIterate = books.ToList();
 
-                foreach (var book in booksToIterate.Where(book => !group.Contains(book) && group.Count < maxItemsPerGroup))
+                foreach (var book in booksToIterate.Where(book => CanBeAddedToBucket(book, bucket, maxItemsPerBucket)))
                 {
-                    group.Add(book);
+                    bucket.Add(book);
                     books.Remove(book);
                 }
 
-                groups.Add(new DiscountGroup { Group = group });
+                buckets.Add(new PriceBucket { Books = bucket });
             }
 
-            return groups;
+            return buckets;
         }
 
-        private static decimal ApplyDiscountedPrice(DiscountGroup group)
+        private static bool CanBeAddedToBucket(int book, List<int> bucket, int maxItemsPerBucket)
         {
-            return group.Count 
-                   * SingleBookPrice 
-                   * DiscountService.GetDiscountFactor(group.UniqueCount);
+            return bucket.Contains(book) == false 
+                   && bucket.Count < maxItemsPerBucket;
         }
 
-        private static int CalculateMaximumItemsInAGroup(IReadOnlyCollection<int> books)
+        private static decimal ApplyDiscountedPrice(PriceBucket bucket)
         {
-            var buckets = (int) Math.Ceiling((decimal) books.Count / books.Distinct().Count());
+            return bucket.Count
+                   * SingleBookPrice
+                   * DiscountService.GetDiscountFactor(bucket.UniqueCount);
+        }
+
+        private static int CalculateMaximumItemsInABucket(List<int> books)
+        {
+            var buckets = (int)Math.Ceiling((decimal) books.Count / books.Distinct().Count());
             var maxItemsPerBucket = books.Count / buckets;
             return maxItemsPerBucket;
         }
