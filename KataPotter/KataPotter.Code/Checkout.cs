@@ -19,12 +19,12 @@ namespace KataPotter.Code
             return price;
         }
 
-        private decimal CalculatePrice(IEnumerable<PriceBucket> buckets)
+        private decimal CalculatePrice(IEnumerable<Bucket> buckets)
         {
             var price = 0m;
             foreach (var bucket in buckets)
             {
-                var shouldHaveDiscount = bucket.Count > 1;
+                var shouldHaveDiscount = bucket.UniqueCount > 1;
                 if (shouldHaveDiscount)
                 {
                     price += ApplyDiscountedPrice(bucket);
@@ -38,35 +38,37 @@ namespace KataPotter.Code
             return price;
         }
 
-        private IEnumerable<PriceBucket> PopulatePriceBuckets(List<int> books)
+        private IEnumerable<Bucket> PopulatePriceBuckets(List<int> books)
         {
-            var buckets = new List<PriceBucket>();
+            var buckets = new List<Bucket>();
             var maxItemsPerBucket = CalculateMaximumItemsInABucket(books);
-
-            for (var i = 0; i <= books.Count; i++)
+            
+            foreach (var book in books)
             {
-                var bucket = new List<int>();
-                var booksToIterate = books.ToList();
+                var existingBuckets = buckets.Where(bucket => bucket.CanBeAdded(book, maxItemsPerBucket)).ToList();
 
-                foreach (var book in booksToIterate.Where(book => CanBeAddedToBucket(book, bucket, maxItemsPerBucket)))
+                if (existingBuckets.Any())
                 {
-                    bucket.Add(book);
-                    books.Remove(book);
+                    existingBuckets.First().Add(book);
                 }
-
-                buckets.Add(new PriceBucket { Books = bucket });
+                else
+                {
+                    CreateBucket(buckets, book);
+                }
             }
 
             return buckets;
         }
 
-        private static bool CanBeAddedToBucket(int book, List<int> bucket, int maxItemsPerBucket)
+        private static void CreateBucket(List<Bucket> buckets, int book)
         {
-            return bucket.Contains(book) == false 
-                   && bucket.Count < maxItemsPerBucket;
+            buckets.Add(new Bucket
+            {
+                Items = new List<int> {book}
+            });
         }
 
-        private static decimal ApplyDiscountedPrice(PriceBucket bucket)
+        private static decimal ApplyDiscountedPrice(Bucket bucket)
         {
             return bucket.Count
                    * SingleBookPrice

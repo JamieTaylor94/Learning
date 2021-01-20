@@ -12,9 +12,9 @@ namespace KataPotter.Code
             {2, 0.95m}
         };
     
-        public static decimal GetDiscountFactor(int groupSize)
+        public static decimal GetDiscountFactor(int uniqueItems)
         {
-            return DiscountFactors[groupSize];
+            return DiscountFactors[uniqueItems];
         }
     }
 }
